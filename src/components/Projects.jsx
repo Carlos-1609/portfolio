@@ -56,7 +56,7 @@ export default function Projects() {
     },
     {
       id: 3,
-      title: "Portfolio Website",
+      title: "Loans App",
       description:
         "A modern loan management app built with Flutter, AWS Cognito, Express.js, and SQL—supports lender/merchant/borrower roles, handles loan applications, shows an active-loans dashboard with status (al día / en mora), and tracks repayments and schedules.",
       image: lendGo,
