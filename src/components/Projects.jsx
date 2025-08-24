@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Github, ExternalLinkIcon } from "lucide-react";
+import { Github, ExternalLink } from "lucide-react"; // <-- rename
 import movieApp from "../assets/movies_app.png";
 import medicalApp from "../assets/medical_app.png";
 import lendGo from "../assets/lend_go.png";
@@ -8,21 +8,29 @@ import jobBoard from "../assets/jobboard.png";
 import buttonMashers from "../assets/buttonMashers.png";
 
 export default function Projects() {
-  const projectsRef = useRef();
+  const projectsRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+
   useEffect(() => {
+    const el = projectsRef.current;
+    if (!el) return;
+
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.intersectionRatio) {
-          setIsVisible(true);
-        }
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setIsVisible(true); // <-- use isIntersecting
+        });
       },
-      { threshold: 0.3 }
+      {
+        threshold: 0.05, // <-- lower threshold: mobile-friendly
+        rootMargin: "0px 0px -10% 0px", // <-- triggers a touch earlier
+      }
     );
-    const element = projectsRef.current;
-    if (element) observer.observe(element);
+
+    observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
   const projects = [
     {
       id: 1,
@@ -72,7 +80,7 @@ export default function Projects() {
       id: 5,
       title: "JobBoard API",
       description:
-        "Rest API for a Job Board application focused on user authentication. This MVP exposes secure endpoints for sign up and log in, returning a token that client apps can use for protected routes later (e.g., posting or applying to jobs",
+        "Rest API for a Job Board application focused on user authentication. This MVP exposes secure endpoints for sign up and log in, returning a token that client apps can use for protected routes later (e.g., posting or applying to jobs).",
       image: jobBoard,
       technologies: ["Node.js", "Express", "JWT", "MongoDB"],
       category: "Backend",
@@ -98,12 +106,17 @@ export default function Projects() {
       ref={projectsRef}
       className="py-24 bg-slate-950 relative overflow-hidden"
     >
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-green-600/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-transparent via-green-600/5 to-transparent"></div>
+      {/* Decorative background */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-green-600/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-transparent via-green-600/5 to-transparent" />
       </div>
-      <div className="container mx-auto px-6 relative z10">
+
+      {/* Content */}
+      <div className="container mx-auto px-6 relative z-10">
+        {" "}
+        {/* <-- z-10 */}
         <div
           className={`text-center mb-16 transition-all duration-1000 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
@@ -117,79 +130,82 @@ export default function Projects() {
             Here are some of my recent projects that showcase my skills and
             expertise
           </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-16">
-            {projects.map((project, index) => {
-              return (
-                <div
-                  key={index}
-                  className={`group bg-slate-900 rounded-xl shadow-md hover:shadow-lg transition-all duration-1000 delay-600 overflow-hidden border border-slate-700 hover:border-green-500 hover:scale-105 ${
-                    isVisible
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-10"
-                  }`}
-                  style={{ transitionDelay: `${(index + 3) * 10}ms` }}
-                >
-                  <div className="relative overflow-hidden">
-                    <img
-                      className="w-full h-70 object-cover group-hover:scale-105 transition-all duration-300"
-                      src={project.image}
-                      alt={project.title}
-                    ></img>
-                    <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                      {/* <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-all duration-300">
-                        <Github className="w-4 h-4 text-gray-700" />
-                      </button> */}
-                      <a
-                        href={project.projectLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-all duration-300"
-                      >
-                        <ExternalLinkIcon className="w-4 h-4 text-gray-700" />
-                      </a>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="bg-slate-800 text-gray-400 px-2 py-1 rounded-full text-xs font-medium ">
-                        {project.category}
-                      </span>
-                    </div>
-                    <h4 className="text-lg font-bold text-white group-hover:bg-green-400 transition-all duration-300">
-                      {project.title}
-                    </h4>
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      {project.description.substring(0, 100)}...
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-4 mt-3">
-                      {project.technologies.map((tech, index) => {
-                        return (
-                          <span
-                            key={index}
-                            className="bg-green-600 text-white px-2 py-1 rounded-2xl text-xs font-medium"
-                          >
-                            {tech}
-                          </span>
-                        );
-                      })}
-                    </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+            {" "}
+            {/* <-- grid-cols-1 */}
+            {projects.map((project, index) => (
+              <div
+                key={project.id}
+                className={`group bg-slate-900 rounded-xl shadow-md hover:shadow-lg transition-all duration-1000 overflow-hidden border border-slate-700 hover:border-green-500 hover:scale-105 ${
+                  isVisible
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-10"
+                }`}
+                style={{ transitionDelay: `${(index + 3) * 10}ms` }}
+              >
+                <div className="relative overflow-hidden">
+                  <img
+                    className="w-full aspect-[16/9] object-cover group-hover:scale-105 transition-all duration-300" // <-- stable height
+                    src={project.image}
+                    alt={project.title}
+                    loading="lazy"
+                  />
+                  <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    {/* <a className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-all duration-300" href="#">
+                      <Github className="w-4 h-4 text-gray-700" />
+                    </a> */}
+                    <a
+                      href={project.projectLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-all duration-300"
+                    >
+                      <ExternalLink className="w-4 h-4 text-gray-700" />
+                    </a>
                   </div>
                 </div>
-              );
-            })}
+
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="bg-slate-800 text-gray-400 px-2 py-1 rounded-full text-xs font-medium">
+                      {project.category}
+                    </span>
+                  </div>
+                  <h4 className="text-lg font-bold text-white">
+                    {project.title}
+                  </h4>
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    {project.description.substring(0, 100)}...
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4 mt-3">
+                    {project.technologies.map((tech, i) => (
+                      <span
+                        key={i}
+                        className="bg-green-600 text-white px-2 py-1 rounded-2xl text-xs font-medium"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
+
           <div
-            className={`text-center transition-all duration-1000 delay-1000 mt-14 ${
+            className={`text-center transition-all duration-1000 mt-14 ${
               isVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-10"
             }`}
-          ></div>
+          />
+
           <a
             target="_blank"
             rel="noopener noreferrer"
             href="https://github.com/Carlos-1609"
-            className="bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:scale-105 "
+            className="inline-block bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:scale-105"
           >
             View All Projects
           </a>
