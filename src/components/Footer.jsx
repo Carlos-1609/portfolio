@@ -1,5 +1,5 @@
 import React from "react";
-import { Heart, ArrowUp } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 
 export default function Footer() {
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
